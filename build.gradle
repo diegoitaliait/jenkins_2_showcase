@@ -1,0 +1,102 @@
+apply plugin: 'groovy'
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.4.1' //version required
+}
+
+sourceSets {
+  dslScripts {
+    groovy {
+      srcDirs 'dslScripts'
+    }
+    compileClasspath += sourceSets.main.output
+    runtimeClasspath += sourceSets.main.output
+  }
+}
+
+repositories {
+  def jenkinsRepo = 'http://repo.jenkins-ci.org/releases/'
+
+  jcenter { artifactUrls jenkinsRepo }
+  maven { url jenkinsRepo }
+  mavenCentral()
+//  jcenter()
+//  maven { url 'http://repo.jenkins-ci.org/releases/' }
+}
+
+configurations {
+  testPlugins {}
+}
+
+dependencies {
+  compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+  compile "org.jenkins-ci.plugins:job-dsl-core:${jobDslVersion}"
+
+  testCompile "cglib:cglib-nodep:${cglibNodepVersion}" // used by Spock
+  testCompile "org.spockframework:spock-core:${spockCoreVersion}"
+
+  // Jenkins test harness dependencies
+  testCompile "org.jenkins-ci.main:jenkins-test-harness:${jenkinsTestHarnessVersion}"
+  testCompile "org.jenkins-ci.main:jenkins-war:${jenkinsVersion}"
+  testCompile "org.jenkins-ci.main:jenkins-war:${jenkinsVersion}:war-for-test@jar"
+
+  // Job DSL plugin including plugin dependencies
+  testCompile "org.jenkins-ci.plugins:cloudbees-folder:${cloudbeesVersion}@jar"
+  testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
+  testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}@jar"
+  testCompile "org.jenkins-ci.plugins:structs:${structsVersion}@jar"
+  testCompile "org.jenkins-ci.modules:instance-identity:${instanceIdentityVersion}@jm"
+  testCompile "org.jenkins-ci.modules:windows-slave-installer:${windowsSlaveInstallerVersion}@jm"
+
+  // plugins to install in test instance
+  testPlugins "org.jenkins-ci.plugins:build-name-setter:${buildNameSetterPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:ansicolor:${ansicolorPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:conditional-buildstep:${conditionalBuildstepPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:envinject:${envinjectPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:flexible-publish:${flexiblePublishPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:git:${gitPluginVersion}"
+  testPlugins "org.jenkins-ci.tools:git-parameter:${gitParameterPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:gitlab-plugin:${gitlabPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:gradle:${gradlePluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:groovy:${groovyPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:htmlpublisher:${htmlpublisherPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:jenkins-multijob-plugin:${jenkinsMultijobPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:junit:${junitPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:mask-passwords:${maskPasswordsPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:mattermost:${mattermostPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:multiple-scms:${multipleScmsPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:nested-view:${nestedViewPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:nodejs:${nodejsPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:parameterized-trigger:${parameterizedTriggerPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:postbuildscript:${postbuildscriptPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:ssh:${sshPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:view-job-filters:${viewJobFiltersPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:ws-cleanup:${wsCleanupPluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:ansible:${ansiblePluginVersion}"
+  testPlugins "org.jenkins-ci.plugins:gitlab-plugin:${gitlabPluginVersion}"
+}
+
+//noinspection GroovyAssignabilityCheck
+task resolveTestPlugins(type: Copy) {
+  from configurations.testPlugins
+  into new File(sourceSets.test.output.resourcesDir, 'test-dependencies')
+  include '*.hpi'
+  include '*.jpi'
+
+  doLast {
+    def baseNames = source.collect { it.name[0..it.name.lastIndexOf('.') - 1] }
+    new File(destinationDir, 'index').setText(baseNames.join('\n'), 'UTF-8')
+  }
+}
+
+//noinspection GroovyAssignabilityCheck
+test {
+  dependsOn tasks.resolveTestPlugins
+  inputs.files sourceSets.dslScripts.groovy.srcDirs
+
+  // set build directory for Jenkins test harness, JENKINS-26331
+  systemProperty 'buildDirectory', project.buildDir.absolutePath
+}
+
+
+
