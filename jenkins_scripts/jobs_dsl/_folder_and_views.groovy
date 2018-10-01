@@ -1,6 +1,6 @@
 package jobs_dsl
 
-import main.groovy.jenkins.showcase.Folders
+import jenkins.showcase.Folders
 
 Folders.loadRootFolders().each { folderName ->
     folder("${folderName}") {}

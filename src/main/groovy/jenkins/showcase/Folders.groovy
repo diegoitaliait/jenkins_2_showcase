@@ -1,4 +1,4 @@
-package main.groovy.jenkins.showcase
+package jenkins.showcase
 
 class Folders {
 
