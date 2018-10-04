@@ -2,6 +2,8 @@ package jobs_dsl
 
 import jenkins.showcase.Folders
 
+folder("jenkins2") {}
+
 Folders.loadRootFolders().each { folderName ->
     folder("jenkins2/${folderName}") {}
 
