@@ -45,26 +45,4 @@ mavenJob("jenkins2/maven/maven_vanilla_job") {
     }
   }
 
-  publishers {
-
-    archiveArtifacts {
-      pattern('*.xml')
-      onlyIfSuccessful()
-      allowEmpty(false)
-      defaultExcludes(true)
-    }
-
-    extendedEmail {
-      recipientList('${email_report}')
-      contentType('text/html')
-      triggers {
-        always {
-          attachBuildLog(true)
-          subject('$DEFAULT_SUBJECT')
-          content('$DEFAULT_CONTENT')
-          contentType('text/html')
-        }
-      }
-    }
-  }
 }
