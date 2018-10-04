@@ -1,6 +1,3 @@
-@Library('command_lib') _
-import command_lib.service.DeployPipelineService
-
 pipeline {
     agent { label "${pipe_deploy_slave}" }
 
