@@ -12,7 +12,7 @@ pipelineJob("jenkins2/pipelines/pipeline_maven_workflow") {
         stringParam('git_url', 'https://github.com/diegoitaliait/gs-spring-boot.git', 'Git URL')
     }
     environmentVariables {
-        env(MAVEN_VERSION, 'maven_354')
+        env('MAVEN_VERSION', 'maven_354')
     }
 
     definition {
