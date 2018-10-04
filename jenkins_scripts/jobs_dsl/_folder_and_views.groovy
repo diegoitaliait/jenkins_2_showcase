@@ -3,7 +3,7 @@ package jobs_dsl
 import jenkins.showcase.Folders
 
 Folders.loadRootFolders().each { folderName ->
-    folder("${folderName}") {}
+    folder("jenkins2/${folderName}") {}
 
     listView("${folderName}/${folderName}") {
         description("${folderName} Jobs")

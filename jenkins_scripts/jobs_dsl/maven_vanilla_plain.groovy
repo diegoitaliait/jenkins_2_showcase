@@ -1,4 +1,4 @@
-mavenJob("maven/maven_vanilla_job") {
+mavenJob("jenkins2/maven/maven_vanilla_job") {
   logRotator(30, 30, 30, 1)
 //  jdk('JDK')
 
