@@ -7,7 +7,7 @@ folder("jenkins2") {}
 Folders.loadRootFolders().each { folderName ->
     folder("jenkins2/${folderName}") {}
 
-    listView("${folderName}/${folderName}") {
+    listView("jenkins2/${folderName}") {
         description("${folderName} Jobs")
         filterBuildQueue()
         filterExecutors()
