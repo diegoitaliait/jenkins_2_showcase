@@ -1,5 +1,3 @@
-import static com.igt.interactive.jenkins.environment.EJobEnvironmentVariableNames.*
-
 pipelineJob("jenkins2/pipelines/pipeline_maven_workflow") {
 
     logRotator(30, 30, 30, 1)
