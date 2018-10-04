@@ -8,8 +8,8 @@ pipelineJob("jenkins2/pipelines/pipeline_maven_workflow") {
 
 
     parameters {
-        stringParam('git_branch', 'master', 'Git branch')
-        stringParam('git_url', 'https://github.com/diegoitaliait/gs-spring-boot.git', 'Git URL')
+        stringParam('project_git_branch', 'master', 'Git branch')
+        stringParam('project_git_url', 'https://github.com/diegoitaliait/gs-spring-boot.git', 'Git URL')
     }
     environmentVariables {
         env('MAVEN_VERSION', 'maven_354')

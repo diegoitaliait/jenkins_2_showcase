@@ -5,8 +5,8 @@ pipeline {
         stage('Configuration') {
             steps {
                 script {
-                    gitBranch = "${git_branch}"
-                    gitUrl = "${git_url}"
+                    gitBranch = "${project_git_branch}"
+                    gitUrl = "${project_git_url}"
                     mavenVersion = "${env.MAVEN_VERSION}"
                     pipelineAbsolutePath = pwd()
 
