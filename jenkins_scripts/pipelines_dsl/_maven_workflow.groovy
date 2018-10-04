@@ -1,5 +1,5 @@
 pipeline {
-    agent { label "${pipe_deploy_slave}" }
+    agent any
 
     stages {
         stage('Configuration') {
@@ -43,17 +43,20 @@ pipeline {
         stage('Maven clean') {
             steps {
                 echo '<clean>'
+                script {
 
-                withMaven(options: [artifactsPublisher(disabled: true)],
+                    withMaven(
+                            maven: "${mavenVersion}",
 //                        jdk: "${pipe_jdk}",
-                        maven: "${mavenVersion}",
 //                        mavenSettingsFilePath: "${maven_settings}",
-                        mavenOpts: "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none") {
-                    dir("complete") {
-                        sh "export IE_MAVEN_AGENT_DISABLED=true"
-                        sh "mvn clean"
+                            mavenOpts: "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none") {
+                        dir("complete") {
+                            sh "export IE_MAVEN_AGENT_DISABLED=true"
+                            sh "mvn clean"
+                        }
                     }
                 }
+
 
                 echo '</ clean>'
             }
@@ -62,18 +65,22 @@ pipeline {
             steps {
                 echo '<test>'
 
-                withMaven(options: [artifactsPublisher(disabled: true)],
+                script {
+
+                    withMaven(
+                            maven: "${mavenVersion}",
 //                        jdk: "${pipe_jdk}",
-                        maven: "${mavenVersion}",
 //                        mavenSettingsFilePath: "${maven_settings}",
-                        mavenOpts: "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none") {
+                            mavenOpts: "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none") {
 
-                    dir("complete") {
-                        sh "export IE_MAVEN_AGENT_DISABLED=true"
-                        sh "mvn test"
+                        dir("complete") {
+                            sh "export IE_MAVEN_AGENT_DISABLED=true"
+                            sh "mvn test"
+                        }
+
                     }
-
                 }
+
 
                 echo '</ test>'
             }
@@ -82,16 +89,19 @@ pipeline {
             steps {
                 echo '<package>'
 
-                withMaven(options: [artifactsPublisher(disabled: true)],
-//                        jdk: "${pipe_jdk}",
-                        maven: "${mavenVersion}",
-//                        mavenSettingsFilePath: "${maven_settings}",
-                        mavenOpts: "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none") {
-                    dir("complete") {
-                        sh "export IE_MAVEN_AGENT_DISABLED=true"
-                        sh "mvn package"
-                    }
+                script {
 
+                    withMaven(
+                            maven: "${mavenVersion}",
+//                        jdk: "${pipe_jdk}",
+//                        mavenSettingsFilePath: "${maven_settings}",
+                            mavenOpts: "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none") {
+                        dir("complete") {
+                            sh "export IE_MAVEN_AGENT_DISABLED=true"
+                            sh "mvn package"
+                        }
+
+                    }
                 }
 
                 echo '</ package>'
